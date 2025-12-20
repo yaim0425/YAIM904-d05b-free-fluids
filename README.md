@@ -39,12 +39,27 @@ No configuration is required. Just unlock and use the recipes.
 
 ## 🔗 Repository
 
-* GitHub: [https://github.com/yaim0425/YAIM0425-d05b-free-fluids](https://github.com/yaim0425/YAIM0425-d05b-free-fluids)
+**MOD**
+[YAIM0425 d05b Free fluids](https://github.com/yaim0425/YAIM0425-d05b-free-fluids)
+
+**Required**
+
+[YAIM0425 d00b Core](https://github.com/yaim0425/YAIM0425-d00b-core)
+
+---
+
+## ❤️ Support
+
+Suggestions, ideas, and balance feedback are welcome on the GitHub repository.
 
 ---
 
 ## 🖼️ Screenshots
 
-![Free Fluids Screenshot 1](screenshot/\(1\).png)
+![Screenshot 1](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(1).png)
 
----
+![Screenshot 2](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(2).png)
+
+![Screenshot 3](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(3).png)
+
+![Screenshot 4](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(4).png)

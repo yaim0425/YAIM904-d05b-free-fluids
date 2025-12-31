@@ -1,8 +1,8 @@
-# YAIM0425 d05b – Free Fluids 💧♻️
+# YAIM904 d05b – Free Fluids 💧♻️
 
 ## 📦 Description
 
-**YAIM0425 d05b – Free Fluids** adds special recipes that allow players to **generate fluids for free** and **destroy unwanted fluids**.
+**YAIM904 d05b – Free Fluids** adds special recipes that allow players to **generate fluids for free** and **destroy unwanted fluids**.
 
 This MOD is designed to remove fluid bottlenecks during testing, creative play, or large-scale factory experimentation.
 
@@ -40,11 +40,11 @@ No configuration is required. Just unlock and use the recipes.
 ## 🔗 Repository
 
 **MOD**
-[YAIM0425 d05b Free fluids](https://github.com/yaim0425/YAIM0425-d05b-free-fluids)
+[YAIM904 d05b Free fluids](https://github.com/yaim0425/YAIM904-d05b-free-fluids)
 
 **Required**
 
-[YAIM0425 d00b Core](https://github.com/yaim0425/YAIM0425-d00b-core)
+[YAIM904 d00b Core](https://github.com/yaim0425/YAIM904-d00b-core)
 
 ---
 
@@ -56,10 +56,10 @@ Suggestions, ideas, and balance feedback are welcome on the GitHub repository.
 
 ## 🖼️ Screenshots
 
-![Screenshot 1](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(1).png)
+![Screenshot 1](https://github.com/yaim0425/YAIM904-d05b-free-fluids/raw/code/screenshot/(1).png)
 
-![Screenshot 2](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(2).png)
+![Screenshot 2](https://github.com/yaim0425/YAIM904-d05b-free-fluids/raw/code/screenshot/(2).png)
 
-![Screenshot 3](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(3).png)
+![Screenshot 3](https://github.com/yaim0425/YAIM904-d05b-free-fluids/raw/code/screenshot/(3).png)
 
-![Screenshot 4](https://github.com/yaim0425/YAIM0425-d05b-free-fluids/raw/code/screenshot/(4).png)
+![Screenshot 4](https://github.com/yaim0425/YAIM904-d05b-free-fluids/raw/code/screenshot/(4).png)

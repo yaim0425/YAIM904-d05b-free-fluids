@@ -1,7 +1,5 @@
 # YAIM904 d05b – Free Fluids 💧♻️
 
----
-
 ## 📦 Description
 
 **YAIM904 d05b – Free Fluids** adds special recipes that allow players to **generate fluids for free** and **destroy unwanted fluids**.
@@ -52,7 +50,7 @@ No configuration is required. Just unlock and use the recipes.
 
 ## ❤️ Support
 
-Suggestions, ideas and balance feedback are welcome on the GitHub repository.
+Suggestions, ideas, and balance feedback are welcome on the GitHub repository.
 
 ---
 

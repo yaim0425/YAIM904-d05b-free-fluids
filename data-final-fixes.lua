@@ -28,27 +28,25 @@ function This_MOD.start()
     --- Modificar los elementos
     for _, spaces in pairs(This_MOD.to_be_processed) do
         for _, space in pairs(spaces) do
-            --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+            --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
             --- Crear los elementos
             This_MOD.create_item(space)
             This_MOD.create_entity(space)
             This_MOD.create_recipe(space)
 
-            --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+            --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         end
     end
 
     --- Crear las recetas para los fluidos
     This_MOD.create_recipe___free()
+    This_MOD.add_category()
 
     --- Ejecutar otro MOD
     if GMOD.d01b then
         --- Cambiar el tamaño de la entidad
         GMOD.d01b.start()
-    else
-        --- Fijar las posiciones actual
-        GMOD.d00b.change_orders()
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -146,7 +144,7 @@ function This_MOD.get_elements()
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         --- Validar valores de referencia
-        if GMOD.entities[This_MOD.new_entity_name] then return end
+        if GMOD.entity[This_MOD.new_entity_name] then return end
 
         --- Validar la entity
         if not entity then return end
@@ -170,6 +168,10 @@ function This_MOD.get_elements()
 
         Space.recipe = GMOD.recipes[Space.item.name]
         Space.recipe = Space.recipe and Space.recipe[1] or nil
+
+        for key, value in pairs(Space) do
+            Space[key] = GMOD.copy_with_format(value)
+        end
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -211,29 +213,6 @@ function This_MOD.get_elements()
 
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-        --- Validar el fluido
-        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-        local function validate(element)
-            if element.type ~= "fluid" then return end
-
-            local Temperatures = Output[element.name] or {}
-            Output[element.name] = Temperatures
-
-            if element.maximum_temperature then
-                Temperatures[element.maximum_temperature] = true
-            elseif element.temperature then
-                Temperatures[element.temperature] = true
-            end
-        end
-
-        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-
-
-
-
-        --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         --- Obtener los fluidos
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -241,18 +220,20 @@ function This_MOD.get_elements()
         if This_MOD.setting.all then
             --- Fluidos creados con recetas
             for _, recipe in pairs(data.raw.recipe) do
-                for _, elements in pairs({
-                    recipe.ingredients,
-                    recipe.results
-                }) do
+                for _, elements in pairs({ recipe.ingredients, recipe.results }) do
                     for _, element in pairs(elements) do
-                        validate(element)
+                        if element.type == "fluid" then
+                            Output[element.name] = Output[element.name] or {}
+                            if element.temperature then
+                                Output[element.name][element.temperature] = true
+                            end
+                        end
                     end
                 end
             end
 
             --- Fluidos creados sin recetas
-            for _, entity in pairs(GMOD.entities) do
+            for _, entity in pairs(GMOD.entity) do
                 repeat
                     --- Validación
                     if not entity.output_fluid_box then break end
@@ -282,10 +263,14 @@ function This_MOD.get_elements()
 
             --- Fluidos minables
             for _, resource in pairs(data.raw.resource) do
-                local results = resource.minable
-                results = results and results.results or {}
-                for _, result in pairs(results) do
-                    validate(result)
+                resource = GMOD.get_format_minable(resource or {})
+                for _, result in pairs(resource or {}) do
+                    if result.type == "fluid" then
+                        Output[result.name] = Output[result.name] or {}
+                        if result.temperature then
+                            Output[result.name][result.temperature] = true
+                        end
+                    end
                 end
             end
         end
@@ -333,12 +318,18 @@ function This_MOD.get_elements()
 
     --- Entidad que se va a duplicar
     validate_entity(
-        GMOD.items[This_MOD.old_entity_name],
-        GMOD.entities[This_MOD.old_entity_name]
+        GMOD.item[This_MOD.old_entity_name],
+        GMOD.entity[This_MOD.old_entity_name]
     )
 
     --- Fluidos a afectar
     This_MOD.fluids = get_fluids()
+
+    --- Fluidos afectados
+    This_MOD.raw = {}
+    for key, _ in pairs(This_MOD.fluids) do
+        This_MOD.raw[key] = GMOD.copy_with_format(GMOD.fluid[key])
+    end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 end
@@ -381,8 +372,7 @@ function This_MOD.create_item(space)
     Item.localised_name = This_MOD.new_localised_name
 
     --- Actualizar el order
-    local Order = tonumber(Item.order) + 1
-    Item.order = GMOD.pad_left_zeros(#Item.order, Order)
+    Item.order = Item.order .. "-05"
 
     --- Agregar indicador del MOD
     table.insert(Item.icons, This_MOD.indicator_bg)
@@ -442,11 +432,7 @@ function This_MOD.create_entity(space)
     Entity.localised_name = This_MOD.new_localised_name
 
     --- Objeto a minar
-    Entity.minable.results = { {
-        type = "item",
-        name = This_MOD.new_entity_name,
-        amount = 1
-    } }
+    Entity.minable.results[1].name = This_MOD.new_entity_name
 
     --- Elimnar propiedades inecesarias
     Entity.fast_replaceable_group = nil
@@ -529,11 +515,7 @@ function This_MOD.create_recipe(space)
     Recipe.ingredients = {}
 
     --- Resultados
-    Recipe.results = { {
-        type = "item",
-        name = This_MOD.new_entity_name,
-        amount = 1
-    } }
+    Recipe.results[1].name = This_MOD.new_entity_name
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -626,7 +608,7 @@ function This_MOD.create_recipe___free()
         Recipe.icons = GMOD.copy(space.fluid.icons)
 
         --- Categoria de fabricación
-        Recipe.categories = { This_MOD.prefix .. space.action }
+        Recipe.category = This_MOD.prefix .. space.action
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -648,7 +630,7 @@ function This_MOD.create_recipe___free()
             local Index = space.propiety == This_MOD.actions.create and 1 or 2
 
             --- Actualizar el order
-            Subgroup.order = Index .. Order:sub(2)
+            Subgroup.order = Index .. "-" .. Order
         end
 
         --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -700,10 +682,12 @@ function This_MOD.create_recipe___free()
 
     for action, propiety in pairs(This_MOD.actions) do
         for fluid, temperatures in pairs(This_MOD.fluids) do
-            if GMOD.fluids[fluid] then
-                for temperature, _ in pairs(temperatures or { [false] = true }) do
+            if GMOD.fluid[fluid] then
+                for temperature, _ in pairs(
+                    temperatures or { [false] = true }
+                ) do
                     validate_fluid({
-                        fluid = GMOD.fluids[fluid],
+                        fluid = This_MOD.raw[fluid],
                         action = action,
                         propiety = propiety,
                         temperature = temperature or nil,
@@ -714,16 +698,15 @@ function This_MOD.create_recipe___free()
     end
 
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+end
 
-
-
-
-
+function This_MOD.add_category()
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
     --- Crear categoria y agrega a la maquita
     --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-    local Category = GMOD.entities[This_MOD.new_entity_name].crafting_categories
+    local Category = GMOD.entity[This_MOD.new_entity_name].crafting_categories
+
     for action, _ in pairs(This_MOD.actions) do
         local Name = This_MOD.prefix .. action
         if GMOD.get_key(Category, Name) then break end
